@@ -1,66 +1,51 @@
-# web-ingest
+# web-puller
 
-**Playwright WebKit content ingestion engine.**
+Playwright WebKit browser automation script. Logs into sites, pulls data
+from target pages, saves to JSON.
 
-Logs into a site, navigates to a target URL, extracts structured data
-(title, meta description, headings, links, body text), and saves it as JSON.
-Designed as a sellable automation module: swap the config, run it.
-
-Built by Alttawan Hensley (Alt Tate) — https://github.com/Tawns-lab
+Built by Alttawan Hensley (Alt Tate).
 
 ## What it does
 
-- Opens any URL in a headless **WebKit** browser (Playwright)
-- Optionally logs in via a separate login URL (generic form detection)
-- Extracts: page title, meta description, headings (h1–h3), links, body text
+- Opens a URL in a headless WebKit browser
+- Optionally logs in (username/password)
+- Extracts: page title, meta description, headings, links, body text
 - Saves everything to a timestamped JSON file
-- Cron-ready for scheduled runs
 
 ## Install
 
-```bash
-pip install -r requirements.txt
-playwright install webkit
-```
+Requires Python 3.8+ on a glibc system (Ubuntu, Debian, macOS, Windows).
+Does NOT work on Alpine Linux (musl) - use Ubuntu or a-Shell on iOS.
+
+    pip install -r requirements.txt
+    playwright install webkit
 
 ## Usage
 
-```bash
-# Basic pull (no login)
-python web_ingest.py --url https://example.com --out data.json
+    python web_ingest.py --url https://example.com --out data.json
 
-# Pull with login
-python web_ingest.py --url https://example.com/dashboard \
-    --login-url https://example.com/login \
-    --username me@example.com --password secret \
-    --out data.json
+With login:
 
-# Scheduled (cron) — daily 9 AM
-0 9 * * * python /path/to/web_ingest.py --url https://example.com --out /data/daily.json
-```
+    python web_ingest.py --url https://example.com --username me@x.com --password secret --out data.json
 
 ## Output format
 
-```json
-{
-  "url": "https://example.com",
-  "title": "Example Domain",
-  "meta_description": "",
-  "headings": [{"tag": "h1", "text": "..."}],
-  "links": [{"text": "...", "href": "..."}],
-  "body_text": "...",
-  "extracted_at": "2026-10-08T12:00:00+00:00"
-}
-```
+    {
+      "url": "...",
+      "title": "...",
+      "meta_description": "...",
+      "headings": ["..."],
+      "links": ["..."],
+      "body_text": "...",
+      "extracted_at": "..."
+    }
 
 ## Pricing
 
-| Package | Price | What's included |
-|---------|-------|----------------|
-| Single script | $500 | One custom script for one site/task, delivered with a 15-min walkthrough |
-| Custom build | $750–$1,500 | Multi-step flows, scheduled runs, error handling, your branding |
-| Monthly retainer | $300/mo | Ongoing maintenance, new tasks added, priority support |
+- Single script: $500
+- Custom build (multi-step, scheduling, error handling): $750-$1,500
+- Monthly retainer (ongoing automation): $300/mo
 
-**Book a 15-minute call:** I'll show you one task you do weekly and what it costs to automate.
+## Contact
 
-Contact: open an issue on this repo or message @Tawns-lab on X.
+Open an issue on this repo, or message @Tawns-lab on X.
