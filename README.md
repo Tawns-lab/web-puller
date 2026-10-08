@@ -1,16 +1,20 @@
-# web-puller
+# web-ingest
 
-**Playwright WebKit browser automation script.**
-Logs into a site, pulls data from a target page, saves it to a file.
+**Playwright WebKit content ingestion engine.**
+
+Logs into a site, navigates to a target URL, extracts structured data
+(title, meta description, headings, links, body text), and saves it as JSON.
+Designed as a sellable automation module: swap the config, run it.
 
 Built by Alttawan Hensley (Alt Tate) — https://github.com/Tawns-lab
 
 ## What it does
 
 - Opens any URL in a headless **WebKit** browser (Playwright)
-- Optionally logs in using generic form detection (username/email + password + submit)
-- Extracts data via CSS selector, or pulls page title + visible body text by default
-- Saves everything to a JSON file with timestamp and status
+- Optionally logs in via a separate login URL (generic form detection)
+- Extracts: page title, meta description, headings (h1–h3), links, body text
+- Saves everything to a timestamped JSON file
+- Cron-ready for scheduled runs
 
 ## Install
 
@@ -23,13 +27,16 @@ playwright install webkit
 
 ```bash
 # Basic pull (no login)
-python web_puller.py --url https://example.com --output data.json
+python web_ingest.py --url https://example.com --out data.json
 
 # Pull with login
-python web_puller.py --url https://example.com --login --user me@example.com --password secret --output data.json
+python web_ingest.py --url https://example.com/dashboard \
+    --login-url https://example.com/login \
+    --username me@example.com --password secret \
+    --out data.json
 
-# Extract specific elements
-python web_puller.py --url https://example.com --selector "h1, .price" --output prices.json
+# Scheduled (cron) — daily 9 AM
+0 9 * * * python /path/to/web_ingest.py --url https://example.com --out /data/daily.json
 ```
 
 ## Output format
@@ -37,13 +44,12 @@ python web_puller.py --url https://example.com --selector "h1, .price" --output 
 ```json
 {
   "url": "https://example.com",
-  "pulled_at": "2026-10-08T12:00:00+00:00",
-  "status": "ok",
-  "data": {
-    "title": "Example Domain",
-    "text": "..."
-  },
-  "error": null
+  "title": "Example Domain",
+  "meta_description": "",
+  "headings": [{"tag": "h1", "text": "..."}],
+  "links": [{"text": "...", "href": "..."}],
+  "body_text": "...",
+  "extracted_at": "2026-10-08T12:00:00+00:00"
 }
 ```
 
